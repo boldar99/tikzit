@@ -29,6 +29,7 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QPainterPathStroker>
+#include <QTransform>
 
 NodeItem::NodeItem(Node *node)
 {
@@ -146,12 +147,67 @@ QPainterPath NodeItem::shape() const
 {
     QPainterPath path;
 
+    double rotate = _node->data()->property("rotate").toDouble();
+    QTransform transform;
+    transform.scale(GLOBAL_SCALEF, GLOBAL_SCALEF).rotate(rotate);
 	if (_node->style()->shape() == "rectangle") {
-        path.addRect(-0.2 * GLOBAL_SCALEF, -0.2 * GLOBAL_SCALEF, 0.4 * GLOBAL_SCALEF, 0.4 * GLOBAL_SCALEF);
-	} else {
+        QVector<QPointF> points({
+                                        QPointF(-0.2, -0.2),
+                                        QPointF(-0.2, 0.2),
+                                        QPointF(0.2, 0.2),
+                                        QPointF(0.2, -0.2)
+                                });
+        QPolygonF rect(points);
+        path.addPolygon(transform.map(rect));
+        path.closeSubpath();
+    } else if (_node->style()->shape() == "triangle") {
+        QVector<QPointF> points({
+                                        QPointF(-0.2, 0.2),
+                                        QPointF(0.0, -0.1464),
+                                        QPointF(0.2, 0.2)
+                                });
+
+        QPolygonF triangle(points);
+        path.addPolygon(transform.map(triangle));
+        path.closeSubpath();
+    } else if (_node->style()->shape() == "signal") {
+        int from = _node->style()->signal_from();
+        int to = _node->style()->signal_to();
+
+        QVector<QPointF> to_east({
+                                        QPointF(-0.29, -0.15),
+                                        QPointF(-0.15, 0),
+                                        QPointF(-0.29, 0.15),
+                                        QPointF(0.12, 0.15),
+                                        QPointF(0.26, 0),
+                                        QPointF(0.12, -0.15)
+                                });
+        QPolygonF signal(to_east);
+        if ((from + to) % 2 == 0) {
+            QTransform t;
+            t.rotate(from * 90);
+            signal = t.map(signal);
+        }
+        path.addPolygon(transform.map(signal));
+        path.closeSubpath();
+    } else if (_node->style()->shape() == "trapezium") {
+        QVector<QPointF> points({
+                                        QPointF(-0.2, -0.2),
+                                        QPointF(-0.4, 0.2),
+                                        QPointF(0.4, 0.2),
+                                        QPointF(0.2, -0.2)
+                                });
+        QPolygonF rect(points);
+        path.addPolygon(transform.map(rect));
+        path.closeSubpath();
+    } else {
         path.addEllipse(QPointF(0, 0), GLOBAL_SCALEF * 0.2, GLOBAL_SCALEF * 0.2);
 	}
-    return path;
+
+    QTransform t;
+    t.rotate(_node->style()->rotate());
+
+    return t.map(path);
 }
 
 // TODO: nodeitem should sync boundingRect()-relevant stuff (label etc) explicitly,

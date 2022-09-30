@@ -22,5 +22,16 @@
 	<string>@FULL_VERSION@</string>
 	<key>CFBundleShortVersionString</key>
 	<string>@FULL_VERSION@</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>tikz</string>
+            </array>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+        </dict>
+    </array>
 </dict>
 </plist>

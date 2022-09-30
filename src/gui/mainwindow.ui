@@ -48,8 +48,8 @@
       <widget class="QTextEdit" name="tikzSource">
        <property name="font">
         <font>
-         <family>Courier New</family>
-         <pointsize>10</pointsize>
+         <family>JetBrainsMono Nerd Font Mono</family>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="lineWrapMode">

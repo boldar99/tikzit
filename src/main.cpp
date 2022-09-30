@@ -29,6 +29,26 @@
 #include <QDebug>
 #include <QScreen>
 
+class MyApplication : public QApplication
+{
+public:
+    Tikzit* tzt;
+
+    MyApplication(int &argc, char **argv)
+            : QApplication(argc, argv)
+    {
+    }
+
+    bool event(QEvent *event) override {
+        if (event->type() == QEvent::FileOpen) {
+            auto *openEvent = dynamic_cast<QFileOpenEvent *>(event);
+            tzt->open(openEvent->file());
+        }
+
+        return QApplication::event(event);
+    }
+};
+
 int main(int argc, char *argv[])
 {
     // #ifdef Q_OS_WIN
@@ -49,10 +69,11 @@ int main(int argc, char *argv[])
 
     // delete a0;
 
-    QApplication a(argc, argv);
+    MyApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 
     tikzit = new Tikzit();
+    a.tzt = tikzit;
     tikzit->init();
 
     qDebug() << a.arguments().length();

@@ -116,7 +116,7 @@ public:
 
     void newDoc();
     void open();
-	void open(QString fileName);
+	void open(const QString& fileName);
     void quit();
     void init();
 

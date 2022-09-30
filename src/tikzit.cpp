@@ -229,7 +229,7 @@ void Tikzit::open()
 	open(fileName);
 }
 
-void Tikzit::open(QString fileName)
+void Tikzit::open(const QString& fileName)
 {
 	if (!fileName.isEmpty()) {
 		if (_windows.size() == 1 &&
@@ -238,9 +238,7 @@ void Tikzit::open(QString fileName)
         {
 			_windows[0]->open(fileName);
 			_windows[0]->show();
-        }
-        else
-        {
+        } else {
             bool found = false;
             foreach (MainWindow *w, _windows) {
                 if (w->tikzDocument()->fileName() == fileName) {
@@ -486,7 +484,11 @@ void Tikzit::initColors()
 
 		"magenta" <<
 		"violet" <<
-		"pink";
+		"pink" <<
+
+        "zx_green" <<
+        "zx_red" <<
+        "zx_grey";
 
     _cols <<
         QColor::fromRgbF(0,0,0) <<
@@ -510,7 +512,11 @@ void Tikzit::initColors()
 
         QColor::fromRgbF(1,0,1) <<
         QColor::fromRgbF(0.5,0,0.5) <<
-        QColor::fromRgbF(1,0.75,0.75);
+        QColor::fromRgbF(1,0.75,0.75) <<
+
+        QColor::fromRgb(216, 248, 216) <<
+        QColor::fromRgb(232, 165, 165) <<
+        QColor::fromRgb(211,211,211);
 
     for (int i = 0; i < 48; ++i) {
         QColorDialog::setStandardColor(i, QColor(Qt::white));

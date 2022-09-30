@@ -64,7 +64,11 @@ public:
 
     // only relevant for node styles
     QString shape(bool tikzitOverride=true) const;
+    qreal rotate() const;
     QString category() const;
+    int signal_direction_to_int(const QString&) const;
+    int signal_from() const;
+    int signal_to() const;
 
     // only relevant for edge styles
     Style::ArrowTipStyle arrowHead() const;

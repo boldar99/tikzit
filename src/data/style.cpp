@@ -85,6 +85,10 @@ QString Style::shape(bool tikzitOverride) const
     return propertyWithDefault("shape", "circle", tikzitOverride);
 }
 
+qreal Style::rotate() const {
+    return propertyWithDefault("rotate", "0").toDouble();
+}
+
 
 // TODO
 int Style::strokeThickness() const
@@ -191,17 +195,58 @@ QPen Style::pen() const
     }
 }
 
-QPainterPath Style::path() const
-{
+QPainterPath Style::path() const {
     QPainterPath pth;
     QString sh = shape();
 
     if (sh == "rectangle") {
         pth.addRect(-30.0f, -30.0f, 60.0f, 60.0f);
+    } else if (sh == "signal") {
+        int from = signal_from();
+        int to = signal_to();
+
+        QVector<QPointF> to_east({
+                                         QPointF(-43.5f, -22.5f),
+                                         QPointF(-22.5f, 0.0f),
+                                         QPointF(-43.5f, 22.5f),
+                                         QPointF(18.0f, 22.5f),
+                                         QPointF(39.0f, 0.0f),
+                                         QPointF(18.0f, -22.5f)
+                                 });
+        QPolygonF signal(to_east);
+        if ((from + to) % 2 == 0) {
+            QTransform t;
+            t.rotate(from * 90);
+            signal = t.map(signal);
+        }
+        pth.addPolygon(signal);
+        pth.closeSubpath();
+    } else if (sh == "triangle") {
+        QVector<QPointF> points({
+                                        QPointF(-30.0f, 30.0f),
+                                        QPointF(0.0f, -1.414f * 15),
+                                        QPointF(30.0f, 30.0f),
+                                });
+
+        QPolygonF triangle(points);
+        pth.addPolygon(triangle);
+        pth.closeSubpath();
+    } else if (sh == "trapezium") {
+        QVector<QPointF> points({
+                                        QPointF(-20.0f, -20.0f),
+                                        QPointF(-40.0f, 20.0f),
+                                        QPointF(40.0f, 20.0f),
+                                        QPointF(20.0f, -20.0f)
+                                });
+        QPolygonF trap(points);
+        pth.addPolygon(trap);
+        pth.closeSubpath();
     } else { // default is 'circle'
         pth.addEllipse(QPointF(0.0f,0.0f), 30.0f, 30.0f);
     }
-    return pth;
+    QTransform t;
+    t.rotate(rotate());
+    return t.map(pth);
 }
 
 QIcon Style::icon() const
@@ -298,3 +343,20 @@ QString Style::category() const
 {
     return propertyWithDefault("tikzit category", "", false);
 }
+
+int Style::signal_direction_to_int(const QString& s) const {
+    if (s == "north") return 1;
+    if (s == "east") return 2;
+    if (s == "south") return 3;
+    if (s == "west") return 4;
+    return 0;
+}
+
+int Style::signal_from() const {
+    return signal_direction_to_int(propertyWithDefault("signal from", "", false));
+}
+
+int Style::signal_to() const {
+    return signal_direction_to_int(propertyWithDefault("signal to", "", false));
+}
+

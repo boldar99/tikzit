@@ -65,6 +65,7 @@ public:
     // only relevant for node styles
     QString shape(bool tikzitOverride=true) const;
     qreal rotate() const;
+    qreal shapeBorderRotate() const;
     QString category() const;
     int signal_direction_to_int(const QString&) const;
     int signal_from() const;

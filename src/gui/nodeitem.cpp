@@ -160,11 +160,11 @@ QPainterPath NodeItem::shape() const
         QPolygonF rect(points);
         path.addPolygon(transform.map(rect));
         path.closeSubpath();
-    } else if (_node->style()->shape() == "triangle") {
+    } else if (_node->style()->shape() == "isosceles triangle") {
         QVector<QPointF> points({
                                         QPointF(-0.2, 0.2),
-                                        QPointF(0.0, -0.1464),
-                                        QPointF(0.2, 0.2)
+                                        QPointF(0.1464, 0),
+                                        QPointF(-0.2, -0.2)
                                 });
 
         QPolygonF triangle(points);
@@ -205,7 +205,7 @@ QPainterPath NodeItem::shape() const
 	}
 
     QTransform t;
-    t.rotate(_node->style()->rotate());
+    t.rotate(-_node->style()->rotate()-_node->style()->shapeBorderRotate());
 
     return t.map(path);
 }

@@ -89,6 +89,10 @@ qreal Style::rotate() const {
     return propertyWithDefault("rotate", "0").toDouble();
 }
 
+qreal Style::shapeBorderRotate() const {
+    return propertyWithDefault("shape border rotate", "0").toDouble();
+}
+
 
 // TODO
 int Style::strokeThickness() const
@@ -198,6 +202,7 @@ QPen Style::pen() const
 QPainterPath Style::path() const {
     QPainterPath pth;
     QString sh = shape();
+    QTransform t;
 
     if (sh == "rectangle") {
         pth.addRect(-30.0f, -30.0f, 60.0f, 60.0f);
@@ -215,17 +220,17 @@ QPainterPath Style::path() const {
                                  });
         QPolygonF signal(to_east);
         if ((from + to) % 2 == 0) {
-            QTransform t;
-            t.rotate(from * 90);
-            signal = t.map(signal);
+            QTransform tt;
+            tt.rotate(from * 90);
+            signal = tt.map(signal);
         }
         pth.addPolygon(signal);
         pth.closeSubpath();
-    } else if (sh == "triangle") {
+    } else if (sh == "isosceles triangle") {
         QVector<QPointF> points({
                                         QPointF(-30.0f, 30.0f),
-                                        QPointF(0.0f, -1.414f * 15),
-                                        QPointF(30.0f, 30.0f),
+                                        QPointF(1.414f * 15, 0),
+                                        QPointF(-30.0f, -30.0f),
                                 });
 
         QPolygonF triangle(points);
@@ -244,8 +249,7 @@ QPainterPath Style::path() const {
     } else { // default is 'circle'
         pth.addEllipse(QPointF(0.0f,0.0f), 30.0f, 30.0f);
     }
-    QTransform t;
-    t.rotate(rotate());
+    t.rotate(-rotate()-shapeBorderRotate());
     return t.map(pth);
 }
 

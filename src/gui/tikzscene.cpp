@@ -236,7 +236,8 @@ void TikzScene::mergeNodes()
 
     // copy adjacent edges from nodes that will be deleted
     foreach (Edge *e, graph()->edges()) {
-        if (m1.contains(e->source()) || m1.contains(e->target())) {
+        if ((m1.contains(e->source()) || m1.contains(e->target()))
+            && (e->source()->point() != e->target()->point())) {
             Edge *e1 = e->copy(&m1);
             AddEdgeCommand *cmd = new AddEdgeCommand(this, e1);
             _tikzDocument->undoStack()->push(cmd);

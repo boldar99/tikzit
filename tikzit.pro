@@ -31,7 +31,7 @@ QMAKE_INFO_PLIST = Info.plist
 
 # Qt 5.8 and above drop support for Mountain Lion
 contains(QT_VERSION, ^5\\.[5-7].*) {
-    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.4
     #macx:QMAKE_MAC_SDK = macosx10.11
 }
 
@@ -140,8 +140,8 @@ win32 {
 }
 
 macx {
-    INCLUDEPATH += /usr/local/opt/poppler/include
-    LIBS += -L/usr/local/opt/poppler/lib
+    INCLUDEPATH += /opt/homebrew/opt/poppler/include
+    LIBS += -L/opt/homebrew/opt/poppler/lib
 }   
 
 LIBS += -lpoppler-cpp

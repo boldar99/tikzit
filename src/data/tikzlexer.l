@@ -80,7 +80,7 @@ FLOAT \-?[0-9]*(\.[0-9]+)?
 =                              {  return EQUALS; }
 <INITIAL>rectangle             {  return RECTANGLE; }
 <INITIAL>node                  {  return NODE; }
-<INITIAL>at                    {  return AT; }
+<INITIAL>at                    {  return AT_; }
 <INITIAL>to                    {  return TO; }
 <INITIAL>cycle                 {  return CYCLE; }
 

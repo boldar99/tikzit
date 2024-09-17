@@ -44,15 +44,11 @@ Building on other distributions should be similar. For Qt setup, you can find in
 
 ## Building on MacOS
 
-You'll need developer tools and Qt6 installed. You can install these via Homebrew with the following commands:
+You'll need developer tools and Qt6 installed. Qt6 can be installed via Homebrew with the following command:
 
     brew install qt6
 
-This doesn't add Qt binaries to the `$PATH` by default, so you may wish to either run:
-
-    brew link --force qt6
-
-or add `/usr/local/opt/qt/bin` to your `$PATH`. Once this is done, TikZiT can be built from the command line via:
+Once this is done, TikZiT can be built from the command line via:
 
     qmake -r
     make

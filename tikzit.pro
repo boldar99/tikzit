@@ -31,7 +31,7 @@ QMAKE_INFO_PLIST = Info.plist
 
 # Qt 5.8 and above drop support for Mountain Lion
 contains(QT_VERSION, ^5\\.[5-7].*) {
-    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.4
+    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 15.0
     #macx:QMAKE_MAC_SDK = macosx10.11
 }
 

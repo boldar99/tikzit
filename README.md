@@ -44,14 +44,13 @@ Building on other distributions should be similar. For Qt setup, you can find in
 
 ## Building on MacOS
 
-You'll need developer tools, Qt5, and Poppler (with Qt bindings) installed. You can install these via Homebrew with the following commands:
+You'll need developer tools and Qt6 installed. You can install these via Homebrew with the following commands:
 
-    brew install qt5
-    brew install poppler
+    brew install qt6
 
 This doesn't add Qt binaries to the `$PATH` by default, so you may wish to either run:
 
-    brew link --force qt5
+    brew link --force qt6
 
 or add `/usr/local/opt/qt/bin` to your `$PATH`. Once this is done, TikZiT can be built from the command line via:
 

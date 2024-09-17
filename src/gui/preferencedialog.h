@@ -21,6 +21,9 @@ protected slots:
     void on_resetColors_clicked();
     void on_autoPdflatex_stateChanged(int state);
     void on_browsePdflatex_clicked();
+    void on_preview_font_size_changed();
+    void on_preview_font_family_changed();
+
 
 private:
     Ui::PreferenceDialog *ui;

@@ -106,7 +106,7 @@ void initTexConstants() {
         << "\\subset" << "\\supset"
 
         << "\\ldots" << "\\vdots" << "\\cdots" << "\\ddots" << "\\iddots"
-        << "\\cdot";
+        << "\\cdot" << "-" << "\\minu";
 
     texConstantCodes
         << "\u03b1" << "\u03b2" << "\u03b3" << "\u03b4" << "\u03b5"
@@ -127,7 +127,7 @@ void initTexConstants() {
         << "\u2282" << "\u2283"
 
         << "\u2026" << "\u22ee" << "\u22ef" << "\u22f1" << "\u22f0"
-        << "\u22c5";
+        << "\u22c5" << "--" << "-";
 
     texModifierNames
         << "\\tiny"

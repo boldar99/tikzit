@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>244</height>
+    <width>537</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,6 +220,16 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Style icon spacing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="styleIconSpacing"/>
+     </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -241,15 +251,45 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Style icon spacing</string>
+        <string>Preview font</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="styleIconSpacing"/>
+     <item row="8" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1,1,2">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Font Size:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="previewFontSize"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Font Family:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="previewFontFamily"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

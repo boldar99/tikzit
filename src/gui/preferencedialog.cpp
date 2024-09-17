@@ -4,6 +4,7 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QSettings>
+#include <QFontDatabase>
 
 PreferenceDialog::PreferenceDialog(QWidget *parent) :
     QDialog(parent),
@@ -37,6 +38,11 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
 
     ui->selectNewEdges->setChecked(settings.value("select-new-edges", false).toBool());
     ui->shiftToScroll->setChecked(settings.value("shift-to-scroll", false).toBool());
+
+    const QFontDatabase fdb = QFontDatabase();
+    ui->previewFontSize->setValue(settings.value("preview-font-size", 12).toInt());
+    ui->previewFontFamily->addItems(fdb.families());
+    ui->previewFontFamily->setCurrentText(settings.value("preview-font-family", "").toString());
 }
 
 PreferenceDialog::~PreferenceDialog()
@@ -60,6 +66,8 @@ void PreferenceDialog::accept()
     settings.setValue("grid-color-minor", color(ui->minorColor));
     settings.setValue("select-new-edges", ui->selectNewEdges->isChecked());
     settings.setValue("shift-to-scroll", ui->shiftToScroll->isChecked());
+    settings.setValue("preview-font-size", ui->previewFontSize->value());
+    settings.setValue("preview-font-family", ui->previewFontFamily->currentText());
     QDialog::accept();
 }
 
@@ -123,4 +131,17 @@ QColor PreferenceDialog::color(QPushButton *btn)
 {
     QPalette pal = btn->palette();
     return pal.color(QPalette::Button);
+}
+
+void PreferenceDialog::on_preview_font_size_changed() {
+    QSettings settings("tikzit", "tikzit");
+
+    settings.setValue("preview-font-size", ui->previewFontSize->value());
+}
+
+void PreferenceDialog::on_preview_font_family_changed() {
+    QSettings settings("tikzit", "tikzit");
+
+    settings.setValue("preview-font-family", ui->previewFontFamily->currentText());
+
 }

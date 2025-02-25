@@ -67,6 +67,7 @@ void MoveCommand::undo()
 
 void MoveCommand::redo()
 {
+    GraphUpdateCommand::redo();
     foreach (NodeItem *ni, _scene->nodeItems()) {
         if (_newNodePositions.contains(ni->node())) {
             ni->node()->setPoint(_newNodePositions.value(ni->node()));

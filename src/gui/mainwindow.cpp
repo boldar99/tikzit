@@ -86,7 +86,7 @@ void MainWindow::restorePosition()
     QSettings settings("tikzit", "tikzit");
     QVariant geom = settings.value(QString("geometry-main-qt") + qVersion());
 
-    if (geom.isValid()) {
+    if (geom.isValid() and !windowState().testFlag(Qt::WindowFullScreen)) {
         restoreGeometry(geom.toByteArray());
     }
 

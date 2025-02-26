@@ -239,6 +239,18 @@ void MainMenu::on_actionMerge_Nodes_triggered()
         tikzit->activeWindow()->tikzScene()->mergeNodes();
 }
 
+void MainMenu::on_actionSnap_To_Grid_triggered()
+{
+    if (tikzit->activeWindow() != 0)
+        tikzit->activeWindow()->tikzScene()->snapToGrid();
+}
+
+void MainMenu::on_actionSnap_To_Half_Grid_triggered()
+{
+    if (tikzit->activeWindow() != 0)
+        tikzit->activeWindow()->tikzScene()->snapToHalfGrid();
+}
+
 void MainMenu::on_actionMake_Path_triggered()
 {
     if (tikzit->activeWindow() != 0)

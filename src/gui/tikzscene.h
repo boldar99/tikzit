@@ -78,6 +78,8 @@ public:
     void extendSelectionRight();
 
     void mergeNodes();
+    void snapToGrid();
+    void snapToHalfGrid();
 
     void reorderSelection(bool toFront);
 

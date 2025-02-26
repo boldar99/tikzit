@@ -267,6 +267,46 @@ void TikzScene::mergeNodes()
     _tikzDocument->undoStack()->endMacro();
 }
 
+void TikzScene::snapToGrid()
+{
+    QSet<Node*> selNodes = getSelectedNodes();
+    QMap<Node*,QPointF> oldNodePositions;
+    QMap<Node*,QPointF> newNodePositions;
+    foreach (Node *n, selNodes) {
+        QPointF oldPos = n->point();
+        QPointF newPos = QPointF(
+            round(oldPos.x() * GLOBAL_SCALE / GRID_SEP) * GRID_SEP / GLOBAL_SCALE,
+            round(oldPos.y() * GLOBAL_SCALE / GRID_SEP) * GRID_SEP / GLOBAL_SCALE
+        );
+        if (newPos.x() != oldPos.x() || newPos.y() != oldPos.y()) {
+            oldNodePositions.insert(n, oldPos);
+            newNodePositions.insert(n, newPos);
+        }
+    }
+    _tikzDocument->undoStack()->push(new MoveCommand(this, oldNodePositions, newNodePositions));
+}
+
+
+void TikzScene::snapToHalfGrid()
+{
+    QSet<Node*> selNodes = getSelectedNodes();
+    QMap<Node*,QPointF> oldNodePositions;
+    QMap<Node*,QPointF> newNodePositions;
+    foreach (Node *n, selNodes) {
+        QPointF oldPos = n->point();
+        QPointF newPos = QPointF(
+            round(oldPos.x() * GLOBAL_SCALE / GRID_SEP * 2) * GRID_SEP / GLOBAL_SCALE / 2,
+            round(oldPos.y() * GLOBAL_SCALE / GRID_SEP * 2) * GRID_SEP / GLOBAL_SCALE / 2
+        );
+
+        if (newPos.x() != oldPos.x() || newPos.y() != oldPos.y()) {
+            oldNodePositions.insert(n, oldPos);
+            newNodePositions.insert(n, newPos);
+        }
+    }
+    _tikzDocument->undoStack()->push(new MoveCommand(this, oldNodePositions, newNodePositions));
+}
+
 void TikzScene::reorderSelection(bool toFront)
 {
     QVector<Node*> nodeOrd, nodeOrd1;

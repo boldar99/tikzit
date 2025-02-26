@@ -67,6 +67,8 @@ public slots:
     void on_actionExtendRight_triggered();
     void on_actionReverse_Edge_Direction_triggered();
     void on_actionMerge_Nodes_triggered();
+    void on_actionSnap_To_Grid_triggered();
+    void on_actionSnap_To_Half_Grid_triggered();
     void on_actionMake_Path_triggered();
     void on_actionMake_Path_as_Background_triggered();
     void on_actionSplit_Path_triggered();

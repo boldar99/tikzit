@@ -38,3 +38,4 @@ tikzlexer.h
 dist
 win32-deps
 .idea
+cmake-build-debug

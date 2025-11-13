@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 3.16)
 project(tikzit LANGUAGES CXX)
 
 if (NOT QT_VER)
-    set (QT_VER "Qt6")
-endif()
+    set(QT_VER "Qt6")
+endif ()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOUIC ON)
 
-find_package(${QT_VER} REQUIRED COMPONENTS Core Gui Widgets Network)
+find_package(${QT_VER} REQUIRED COMPONENTS Core Gui Widgets Network Pdf) # <<-- added Pdf component
 find_package(BISON)
 find_package(FLEX)
 
@@ -27,8 +27,6 @@ BISON_TARGET(PARSER src/data/tikzparser.y ${CMAKE_CURRENT_BINARY_DIR}/tikzparser
 FLEX_TARGET(LEXER src/data/tikzlexer.l ${CMAKE_CURRENT_BINARY_DIR}/tikzlexer.lexer.cpp)
 ADD_FLEX_BISON_DEPENDENCY(LEXER PARSER)
 
-
-#cmake_policy(SET CMP0071 NEW) # run AUTOXXX on generated files ('NEW' default behaviour)
 
 set(SOURCES
     src/data/delimitedstringvalidator.cpp
@@ -115,27 +113,41 @@ set(FORMS
 )
 
 if (${QT_VER} STREQUAL "Qt6")
-    qt6_wrap_ui(FORM_HEADERS ${FORMS})
     qt6_add_resources(QT_RESOURCES tikzit.qrc)
 else()
-    qt5_wrap_ui(FORM_HEADERS ${FORMS})
     qt5_add_resources(QT_RESOURCES tikzit.qrc)
 endif()
 
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    "${CMAKE_SOURCE_DIR}/src/gui"
+)
 
+set(FORMS
+    src/gui/exportdialog.ui
+    src/gui/mainmenu.ui
+    src/gui/mainwindow.ui
+    src/gui/preferencedialog.ui
+    src/gui/previewwindow.ui
+    src/gui/propertypalette.ui
+    src/gui/styleeditor.ui
+    src/gui/stylepalette.ui
+)
 
-add_executable(tikzit
-    ${SOURCES}
-    ${HEADERS}
-    ${FORM_HEADERS}
-    ${FLEX_LEXER_OUTPUTS}
-    ${BISON_PARSER_OUTPUTS}
-    ${QT_RESOURCES})
+add_executable(tikzit MACOSX_BUNDLE
+        ${SOURCES}
+        ${HEADERS}
+        ${FORMS}
+        ${FLEX_LEXER_OUTPUTS}
+        ${BISON_PARSER_OUTPUTS}
+        ${QT_RESOURCES}
+)
 
 target_link_libraries(${PROJECT_NAME}
     "${QT_VER}::Core"
     "${QT_VER}::Gui"
     "${QT_VER}::Widgets"
-    "${QT_VER}::Network")
+    "${QT_VER}::Network"
+    "${QT_VER}::Pdf"
+)
 
-install (TARGETS tikzit DESTINATION bin)
+install(TARGETS tikzit DESTINATION bin)

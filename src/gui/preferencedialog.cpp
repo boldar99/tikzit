@@ -39,9 +39,9 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
     ui->selectNewEdges->setChecked(settings.value("select-new-edges", false).toBool());
     ui->shiftToScroll->setChecked(settings.value("shift-to-scroll", false).toBool());
 
-    const QFontDatabase fdb = QFontDatabase();
+    const QStringList fams = QFontDatabase::families();
     ui->previewFontSize->setValue(settings.value("preview-font-size", 12).toInt());
-    ui->previewFontFamily->addItems(fdb.families());
+    ui->previewFontFamily->addItems(fams);
     ui->previewFontFamily->setCurrentText(settings.value("preview-font-family", "").toString());
 }
 

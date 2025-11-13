@@ -72,13 +72,14 @@ void Tikzit::init()
 
     QVariant check = settings.value("check-for-updates");
     if (check.isNull()) {
-        int resp = QMessageBox::question(nullptr,
-          tr("Check for updates"),
-          tr("Would you like TikZiT to check for updates automatically?"
-             " (You can always change this later in the Help menu.)"),
-          QMessageBox::Yes | QMessageBox::Default,
-          QMessageBox::No,
-          QMessageBox::NoButton);
+        QMessageBox::StandardButton resp = QMessageBox::question(
+            nullptr,
+            tr("Check for updates"),
+            tr("Would you like TikZiT to check for updates automatically?"
+               " (You can always change this later in the Help menu.)"),
+            QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
+            QMessageBox::No
+        );
         check.setValue(resp == QMessageBox::Yes);
     }
 

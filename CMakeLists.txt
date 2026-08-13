@@ -133,6 +133,9 @@ set(FORMS
     src/gui/stylepalette.ui
 )
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
+set(CMAKE_MACOSX_RPATH OFF)
+
 add_executable(tikzit MACOSX_BUNDLE
         ${SOURCES}
         ${HEADERS}

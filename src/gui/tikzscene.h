@@ -36,6 +36,7 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QRectF>
+#include <QList>
 #include <QVector>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsSceneMouseEvent>
@@ -117,12 +118,12 @@ private:
     QMap<Node*,NodeItem*> _nodeItems;
     QMap<Edge*,EdgeItem*> _edgeItems;
     QMap<Path*,PathItem*> _pathItems;
-    QGraphicsLineItem *_drawEdgeItem;
+    QList<QGraphicsLineItem*> _drawEdgeItems;
     QGraphicsRectItem *_rubberBandItem;
     EdgeItem *_modifyEdgeItem;
     Edge *_selectingEdge;
-    NodeItem *_edgeStartNodeItem;
-    NodeItem *_edgeEndNodeItem;
+    QList<NodeItem*> _edgeStartNodeItems;
+    QList<NodeItem*> _edgeEndNodeItems;
     bool _firstControlPoint;
     QPointF _mouseDownPos;
     bool _draggingNodes;
@@ -139,7 +140,6 @@ private:
     bool _highlightTails;
     bool _smartTool;
 
-    bool _ctrlWasPressed;
 };
 
 #endif // TIKZSCENE_H

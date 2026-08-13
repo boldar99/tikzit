@@ -38,9 +38,7 @@ TikzScene::TikzScene(TikzDocument *tikzDocument, ToolPalette *tools,
     QGraphicsScene(parent), _tikzDocument(tikzDocument), _tools(tools), _styles(styles)
 {
     _modifyEdgeItem = nullptr;
-    _edgeStartNodeItem = nullptr;
     _drawNodeLabels = true;
-    _drawEdgeItem = new QGraphicsLineItem();
     _rubberBandItem = new QGraphicsRectItem();
     _enabled = true;
     //setSceneRect(-310,-230,620,450);
@@ -48,14 +46,7 @@ TikzScene::TikzScene(TikzDocument *tikzDocument, ToolPalette *tools,
     refreshSceneBounds();
 
     QPen pen;
-    pen.setColor(QColor::fromRgbF(0.5, 0.0, 0.5));
-    //pen.setWidth(3.0f);
     pen.setCosmetic(true);
-    _drawEdgeItem->setPen(pen);
-    _drawEdgeItem->setLine(0,0,0,0);
-    _drawEdgeItem->setVisible(false);
-    addItem(_drawEdgeItem);
-
     pen.setColor(QColor::fromRgbF(0.6, 0.6, 0.8));
     //pen.setWidth(3.0f);
     //QVector<qreal> dash;
@@ -630,11 +621,30 @@ void TikzScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     case ToolPalette::EDGE:
         foreach (QGraphicsItem *gi, items(_mouseDownPos)) {
             if (NodeItem *ni = dynamic_cast<NodeItem*>(gi)){
-                _edgeStartNodeItem = ni;
-                _edgeEndNodeItem = ni;
-                QLineF line(toScreen(ni->node()->point()), _mouseDownPos);
-                _drawEdgeItem->setLine(line);
-                _drawEdgeItem->setVisible(true);
+                _edgeStartNodeItems.append(ni);
+
+                if ((event->modifiers() & Qt::ControlModifier) && ni->isSelected()) {
+                    foreach (Node *node, graph()->nodes()) {
+                        NodeItem *selectedNodeItem = _nodeItems.value(node, nullptr);
+                        if (selectedNodeItem != nullptr && selectedNodeItem != ni &&
+                            selectedNodeItem->isSelected()) {
+                            _edgeStartNodeItems.append(selectedNodeItem);
+                        }
+                    }
+                }
+
+                QPen edgePen;
+                edgePen.setColor(QColor::fromRgbF(0.5, 0.0, 0.5));
+                edgePen.setCosmetic(true);
+                foreach (NodeItem *startNodeItem, _edgeStartNodeItems) {
+                    _edgeEndNodeItems.append(startNodeItem);
+                    QGraphicsLineItem *drawEdgeItem = new QGraphicsLineItem();
+                    drawEdgeItem->setPen(edgePen);
+                    drawEdgeItem->setLine(QLineF(toScreen(startNodeItem->node()->point()),
+                                                 _mouseDownPos));
+                    addItem(drawEdgeItem);
+                    _drawEdgeItems.append(drawEdgeItem);
+                }
                 break;
             }
         }
@@ -773,19 +783,25 @@ void TikzScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case ToolPalette::VERTEX:
         break;
     case ToolPalette::EDGE:
-        if (_drawEdgeItem->isVisible()) {
-            _edgeEndNodeItem = nullptr;
-            foreach (QGraphicsItem *gi, items(mousePos)) {
-                if (NodeItem *ni = dynamic_cast<NodeItem*>(gi)){
-                    _edgeEndNodeItem = ni;
-                    break;
+        if (!_drawEdgeItems.isEmpty()) {
+            QPointF anchor = toScreen(_edgeStartNodeItems.first()->node()->point());
+            for (int i = 0; i < _drawEdgeItems.size(); ++i) {
+                NodeItem *startNodeItem = _edgeStartNodeItems[i];
+                QPointF start = toScreen(startNodeItem->node()->point());
+                QPointF translatedMousePos = mousePos + start - anchor;
+                NodeItem *endNodeItem = nullptr;
+                foreach (QGraphicsItem *gi, items(translatedMousePos)) {
+                    if (NodeItem *ni = dynamic_cast<NodeItem*>(gi)) {
+                        endNodeItem = ni;
+                        break;
+                    }
                 }
+                _edgeEndNodeItems[i] = endNodeItem;
+                QPointF end = (endNodeItem != nullptr)
+                                  ? toScreen(endNodeItem->node()->point())
+                                  : translatedMousePos;
+                _drawEdgeItems[i]->setLine(QLineF(start, end));
             }
-            QPointF p1 = _drawEdgeItem->line().p1();
-            QPointF p2 = (_edgeEndNodeItem != nullptr) ? toScreen(_edgeEndNodeItem->node()->point()) : mousePos;
-            QLineF line(p1, p2);
-
-            _drawEdgeItem->setLine(line);
         }
         break;
     case ToolPalette::CROP:
@@ -894,22 +910,36 @@ void TikzScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         break;
     case ToolPalette::EDGE:
-        // add an edge
-        if (_edgeStartNodeItem != nullptr && _edgeEndNodeItem != nullptr) {
-            Edge *e = new Edge(_edgeStartNodeItem->node(), _edgeEndNodeItem->node(), _tikzDocument);
-			e->setStyleName(_styles->activeEdgeStyleName());
+        {
+            QList<Edge*> edges;
+            for (int i = 0; i < _edgeStartNodeItems.size(); ++i) {
+                if (_edgeEndNodeItems[i] != nullptr) {
+                    Edge *edge = new Edge(_edgeStartNodeItems[i]->node(),
+                                          _edgeEndNodeItems[i]->node(),
+                                          _tikzDocument);
+                    edge->setStyleName(_styles->activeEdgeStyleName());
+                    edges.append(edge);
+                }
+            }
 
-            bool selectEdge = settings.value("select-new-edges", false).toBool();
-            QSet<Node*> selNodes;
-            QSet<Edge*> selEdges;
-            if (selectEdge) getSelection(selNodes, selEdges);
-            AddEdgeCommand *cmd = new AddEdgeCommand(this, e, selectEdge,
-                                                     selNodes, selEdges);
-            _tikzDocument->undoStack()->push(cmd);
+            if (!edges.isEmpty()) {
+                bool selectEdge = settings.value("select-new-edges", false).toBool();
+                QSet<Node*> selNodes;
+                QSet<Edge*> selEdges;
+                if (selectEdge) getSelection(selNodes, selEdges);
+                AddEdgesCommand *cmd = new AddEdgesCommand(this, edges, selectEdge,
+                                                           selNodes, selEdges);
+                _tikzDocument->undoStack()->push(cmd);
+            }
+
+            foreach (QGraphicsLineItem *drawEdgeItem, _drawEdgeItems) {
+                removeItem(drawEdgeItem);
+                delete drawEdgeItem;
+            }
+            _drawEdgeItems.clear();
+            _edgeStartNodeItems.clear();
+            _edgeEndNodeItems.clear();
         }
-        _edgeStartNodeItem = nullptr;
-        _edgeEndNodeItem = nullptr;
-        _drawEdgeItem->setVisible(false);
         break;
     case ToolPalette::CROP:
         break;

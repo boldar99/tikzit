@@ -137,6 +137,23 @@ private:
     QSet<Edge*> _selEdges;
 };
 
+class AddEdgesCommand : public GraphUpdateCommand
+{
+public:
+    explicit AddEdgesCommand(TikzScene *scene, QList<Edge*> edges,
+                             bool selectEdges=false,
+                             QSet<Node *> selNodes=QSet<Node*>(),
+                             QSet<Edge *> selEdges=QSet<Edge*>(),
+                             QUndoCommand *parent = nullptr);
+    void undo() override;
+    void redo() override;
+private:
+    QList<Edge*> _edges;
+    bool _selectEdges;
+    QSet<Node*> _selNodes;
+    QSet<Edge*> _selEdges;
+};
+
 class ChangeEdgeModeCommand : public GraphUpdateCommand
 {
 public:

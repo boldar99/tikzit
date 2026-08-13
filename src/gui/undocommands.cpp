@@ -284,6 +284,63 @@ void AddEdgeCommand::redo()
     GraphUpdateCommand::redo();
 }
 
+AddEdgesCommand::AddEdgesCommand(TikzScene *scene,
+                                 QList<Edge*> edges,
+                                 bool selectEdges,
+                                 QSet<Node*> selNodes,
+                                 QSet<Edge*> selEdges,
+                                 QUndoCommand *parent) :
+    GraphUpdateCommand(scene, parent), _edges(edges),
+    _selectEdges(selectEdges), _selNodes(selNodes), _selEdges(selEdges)
+{
+}
+
+void AddEdgesCommand::undo()
+{
+    foreach (Edge *edge, _edges) {
+        EdgeItem *edgeItem = _scene->edgeItems().value(edge, nullptr);
+        if (edgeItem != nullptr) {
+            _scene->removeItem(edgeItem);
+            _scene->edgeItems().remove(edge);
+            delete edgeItem;
+        }
+        _scene->graph()->removeEdge(edge);
+    }
+    _scene->refreshZIndices();
+
+    if (_selectEdges) {
+        foreach (NodeItem *nodeItem, _scene->nodeItems()) {
+            nodeItem->setSelected(_selNodes.contains(nodeItem->node()));
+        }
+        foreach (EdgeItem *edgeItem, _scene->edgeItems()) {
+            edgeItem->setSelected(_selEdges.contains(edgeItem->edge()));
+        }
+    }
+
+    GraphUpdateCommand::undo();
+}
+
+void AddEdgesCommand::redo()
+{
+    if (_selectEdges) _scene->clearSelection();
+
+    foreach (Edge *edge, _edges) {
+        edge->attachStyle();
+        _scene->graph()->addEdge(edge);
+        EdgeItem *edgeItem = new EdgeItem(edge);
+        _scene->edgeItems().insert(edge, edgeItem);
+        _scene->addItem(edgeItem);
+
+        if (!_scene->graph()->nodes().isEmpty()) {
+            edgeItem->stackBefore(_scene->nodeItems()[_scene->graph()->nodes().first()]);
+        }
+        if (_selectEdges) edgeItem->setSelected(true);
+    }
+
+    _scene->refreshZIndices();
+    GraphUpdateCommand::redo();
+}
+
 ChangeEdgeModeCommand::ChangeEdgeModeCommand(TikzScene *scene, Edge *edge, QUndoCommand *parent) :
     GraphUpdateCommand(scene, parent), _edge(edge)
 {

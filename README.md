@@ -48,12 +48,17 @@ You'll need developer tools and Qt6 installed. Qt6 can be installed via Homebrew
 
     brew install qt6
 
-Once this is done, TikZiT can be built from the command line via:
+Build a Debug configuration for development with:
 
-    qmake -r
-    make
+    cmake -S . -B cmake-build-debug -DCMAKE_BUILD_TYPE=Debug
+    cmake --build cmake-build-debug -j
 
-To bundle the required libraries into `tikzit.app` and create a `.dmg` file, you can additionally run:
+Build a smaller, optimized Release configuration for distribution with:
+
+    cmake -S . -B cmake-build-release -DCMAKE_BUILD_TYPE=Release
+    cmake --build cmake-build-release -j
+
+To bundle the Release application and create a shareable `.dmg`, run:
 
     ./deploy-osx.sh
 

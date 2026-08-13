@@ -4,10 +4,10 @@ set -Eeuo pipefail
 # Build a distributable macOS application and disk image from the CMake build.
 #
 # Usage: ./deploy-osx.sh [BUILD_DIR] [APP_NAME] [DIST_DIR]
-# Example: ./deploy-osx.sh cmake-build-debug tikzit dist
+# Example: ./deploy-osx.sh cmake-build-release tikzit dist
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUILD_DIR="${1:-cmake-build-debug}"
+BUILD_DIR="${1:-cmake-build-release}"
 APP_NAME="${2:-tikzit}"
 DIST_DIR="${3:-dist}"
 

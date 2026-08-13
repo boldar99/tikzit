@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(tikzit LANGUAGES CXX)
 
+set(FULL_VERSION "2.2")
+
 if (NOT QT_VER)
     set(QT_VER "Qt6")
 endif ()
@@ -136,6 +138,11 @@ set(FORMS
 set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
 set(CMAKE_MACOSX_RPATH OFF)
 
+set(TIKZIT_APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/images/tikzit.icns")
+set_source_files_properties(${TIKZIT_APP_ICON} PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources"
+)
+
 add_executable(tikzit MACOSX_BUNDLE
         ${SOURCES}
         ${HEADERS}
@@ -143,6 +150,12 @@ add_executable(tikzit MACOSX_BUNDLE
         ${FLEX_LEXER_OUTPUTS}
         ${BISON_PARSER_OUTPUTS}
         ${QT_RESOURCES}
+        ${TIKZIT_APP_ICON}
+)
+
+set_target_properties(tikzit PROPERTIES
+    MACOSX_BUNDLE_ICON_FILE "tikzit.icns"
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -151,6 +164,20 @@ target_link_libraries(${PROJECT_NAME}
     "${QT_VER}::Widgets"
     "${QT_VER}::Network"
     "${QT_VER}::Pdf"
+)
+
+# Keep the non-code project assets next to CLion's build output. Most images
+# are also embedded by tikzit.qrc; this copy is useful for packaging and for
+# inspecting a complete build tree. The macOS app icon itself is copied into
+# tikzit.app/Contents/Resources by MACOSX_PACKAGE_LOCATION above.
+add_custom_command(TARGET tikzit POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/images"
+            "${CMAKE_CURRENT_BINARY_DIR}/images"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/share"
+            "${CMAKE_CURRENT_BINARY_DIR}/share"
+    COMMENT "Copying TikZiT images and shared data to the build directory"
 )
 
 install(TARGETS tikzit DESTINATION bin)

@@ -1163,7 +1163,19 @@ void TikzScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
             if (d->exec()) {
                 QMap<Node*,QString> oldLabels;
-                oldLabels.insert(ni->node(), ni->node()->label());
+                const bool applyToSelection = event->modifiers() & Qt::ControlModifier;
+
+                if (applyToSelection) {
+                    foreach (Node *node, getSelectedNodes()) {
+                        oldLabels.insert(node, node->label());
+                    }
+                    // The modifier click can toggle the initiating node out of
+                    // the selection before the double-click is delivered.
+                    oldLabels.insert(ni->node(), ni->node()->label());
+                } else {
+                    oldLabels.insert(ni->node(), ni->node()->label());
+                }
+
                 ChangeLabelCommand *cmd = new ChangeLabelCommand(this, oldLabels, d->textValue());
                 _tikzDocument->undoStack()->push(cmd);
             }

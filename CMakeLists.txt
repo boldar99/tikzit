@@ -26,7 +26,12 @@ include_directories(
 
 
 BISON_TARGET(PARSER src/data/tikzparser.y ${CMAKE_CURRENT_BINARY_DIR}/tikzparser.parser.cpp)
-FLEX_TARGET(LEXER src/data/tikzlexer.l ${CMAKE_CURRENT_BINARY_DIR}/tikzlexer.lexer.cpp)
+FLEX_TARGET(LEXER src/data/tikzlexer.l
+    ${CMAKE_CURRENT_BINARY_DIR}/tikzlexer.lexer.cpp
+    # tikzlexer.l fixes this filename relative to Flex's source working
+    # directory. Declare it so clean/incremental builds track it correctly.
+    DEFINES_FILE ${CMAKE_CURRENT_SOURCE_DIR}/tikzlexer.h
+)
 ADD_FLEX_BISON_DEPENDENCY(LEXER PARSER)
 
 

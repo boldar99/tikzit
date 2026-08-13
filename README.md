@@ -57,6 +57,8 @@ To bundle the required libraries into `tikzit.app` and create a `.dmg` file, you
 
     ./deploy-osx.sh
 
+The distributable application and disk image will be written to `dist/`.
+
 
 On older systems (pre-10.11), you can build with Qt 5.6, which <a href="http://doc.qt.io/qt-5/supported-platforms-and-configurations.html">claims</a> to support Mac OS as far back as Mountain Lion. It is installable via <a href="https://www.macports.org">MacPorts</a>:
 

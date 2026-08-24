@@ -395,9 +395,9 @@ Graph *Graph::copyOfSubgraphWithNodes(QSet<Node *> nds)
 
 void Graph::insertGraph(Graph *graph)
 {
-    QMap<Node*,Node*> nodeTable;
     foreach (Node *n, graph->nodes()) addNode(n);
     foreach (Edge *e, graph->edges()) addEdge(e);
+    foreach (Path *p, graph->paths()) addPath(p);
 }
 
 void Graph::reflectNodes(QSet<Node*> nds, bool horizontal)

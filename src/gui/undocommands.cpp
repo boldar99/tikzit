@@ -445,7 +445,6 @@ void PasteCommand::undo()
         _scene->removeItem(pi);
         delete pi;
 
-        p->removeEdges();
         _scene->graph()->removePath(p);
     }
 
